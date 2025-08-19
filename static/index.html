@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Treemap Viewer</title>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 20px; }
+    #plot { width: 100%; height: 70vh; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap: wrap; margin: 6px 0; }
+    select, input, button { padding: 6px 8px; }
+  </style>
+</head>
+<body>
+  <h2>Upload Excel/CSV → Treemap (ID / Label / Modelle als Spalten)</h2>
+
+  <div class="row">
+    <input type="file" id="file" />
+    <button id="btnUpload">Upload</button>
+    <span id="status"></span>
+  </div>
+
+  <div class="row">
+    <label>Model:</label>
+    <select id="model"></select>
+    <input id="search" placeholder="Suche in Labels..." />
+    <button id="btnSearch">Suchen</button>
+    <button id="btnDraw">Treemap zeichnen</button>
+  </div>
+
+  <div class="row">
+    <label>Ergebnisse:</label>
+    <select id="resultsDropdown">
+      <option value="">-- Treffer auswählen --</option>
+    </select>
+  </div>
+
+  <div id="plot"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
