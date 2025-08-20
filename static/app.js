@@ -9,12 +9,12 @@ function norm(s){ return (s||"").toString().trim().toLowerCase().replace(/\s+/g,
 
 $('#btnUpload').onclick = async () => {
   const f = $('#file').files[0];
-  if (!f) return alert('Bitte Datei wählen');
+  if (!f) return alert('Please select a file');
   const fd = new FormData();
   fd.append('file', f);
   statusEl.textContent = '⏳ Upload...';
   const res = await fetch('/upload', { method: 'POST', body: fd });
-  if (!res.ok) { statusEl.textContent = '❌ Upload-Fehler'; alert(await res.text()); return; }
+  if (!res.ok) { statusEl.textContent = '❌ Upload error'; alert(await res.text()); return; }
   const data = await res.json();
   dataset_id = data.dataset_id;
 
@@ -28,7 +28,7 @@ $('#btnUpload').onclick = async () => {
     opt.value = m; opt.textContent = m;
     modelSel.appendChild(opt);
   });
-  statusEl.textContent = `✅ Hochgeladen. Modelle: ${data.models.join(', ')}`;
+  statusEl.textContent = `✅ file Uploaded`;
 };
 
 function filterByPath(tree, parts) {
@@ -99,7 +99,7 @@ function drawSingleTreemap(tree, title, targetEl, highlightTerm='') {
 
 $('#btnDraw').onclick = async () => {
   const model = modelSel.value;
-  if (!dataset_id || !model) return alert('Bitte zuerst Dataset und ein Modell wählen (nicht "nothing").');
+  if (!dataset_id || !model) return alert('please upload a dataset or choose a model first');
   const res = await fetch(`/tree?dataset_id=${encodeURIComponent(dataset_id)}&model=${encodeURIComponent(model)}`);
   if (!res.ok) { alert(await res.text()); return; }
   const tree = await res.json();
@@ -123,10 +123,10 @@ $('#btnSearch').onclick = async () => {
   const hits = await res.json();
 
   // Dropdown befüllen
-  resultsDD.innerHTML = '<option value="">-- Treffer auswählen --</option>';
+  resultsDD.innerHTML = '<option value="">-- choose a hit --</option>';
   if (!hits.length) {
     const opt = document.createElement('option');
-    opt.value = ''; opt.textContent = 'Keine Treffer';
+    opt.value = ''; opt.textContent = 'No hits';
     resultsDD.appendChild(opt);
     return;
   }
@@ -137,12 +137,6 @@ $('#btnSearch').onclick = async () => {
     opt.textContent = `(${h.model}) ${h.path_label}`;
     resultsDD.appendChild(opt);
   });
-
-  // Optional: direkt ersten Treffer zeichnen
-  if (resultsDD.options.length > 1) {
-    resultsDD.selectedIndex = 1;
-    resultsDD.dispatchEvent(new Event('change'));
-  }
 };
 
 resultsDD.onchange = async (e) => {
@@ -168,10 +162,6 @@ resultsDD.onchange = async (e) => {
   }
   cursor.children = JSON.parse(JSON.stringify(sub.children || []));
 
-  // Titel-Logik:
-  // 1) Wenn im Model-Dropdown etwas gewählt ist -> diesen Namen
-  // 2) sonst Modell aus Treffer verwenden
-  // 3) Fallback: aus dem Dropdown-Text ( "(Model) ..." ) parsen
   let modelTitle = modelSel.value;
   if (!modelTitle) modelTitle = h.model;
   if (!modelTitle) {
